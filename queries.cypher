@@ -1,4 +1,4 @@
-CALL apoc.load.json("file:///items.json")
+CALL apoc.load.json("file:///https://github.com/mneedham/itsu-neo4j/raw/master/import/items.json")
 YIELD value
 
 MERGE (product:Product {url: value.url})
@@ -13,13 +13,6 @@ MERGE (product)-[:CONTAINS_ALLERGEN]->(allergen);
 MATCH (allergen:Allergen)
 RETURN count(*), collect(allergen.name) AS allergens;
 
-.How many allergens are there?
-[opts="header"]
-|===
-| count(*) | allergens
-| 14       | ["fish", "soya", "mustard", "gluten", "celery", "sesame", "sulphur dioxide", "dairy", "egg", "crustaceans", "wheat", "mullusc", "nuts", "peanuts"]
-|===
-
 // Which allergen is most prevalent?
 MATCH (:Product)
 WITH count(*) AS productCount
@@ -30,25 +23,13 @@ RETURN allergen.name AS allergen, count,
 ORDER BY count DESC
 LIMIT 5;
 
-.Which allergen is most prevalent?
-[opts="header"]
-|===
-| allergen | count | percentageOfProducts
-| "soya"    | 78    | 0.7
-| "gluten"  | 55    | 0.53
-| "sesame"  | 54    | 0.52
-| "mustard" | 42    | 0.4
-| "celery"  | 24    | 0.23
-
-|===
-
 MATCH (product:Product)
 WHERE not((product)-[:CONTAINS_ALLERGEN]->(:Allergen {name: "soya"}))
 RETURN product.name, [(product)-[:CONTAINS_ALLERGEN]->(a) | a.name];
 
 
 // Which products don't contain any of my allergens?
-WITH ["crustaceans", "nuts", "egg", "dairy", "fish"] AS allergens
+WITH ["crustaceans", "nuts", "peanuts", "egg", "dairy", "fish"] AS allergens
 MATCH (product:Product)
 WHERE all(allergen in allergens WHERE not((product)-[:CONTAINS_ALLERGEN]->(:Allergen {name: allergen})))
 RETURN product.name, product.description, [(product)-[:CONTAINS_ALLERGEN]->(a) | a.name] AS allergens;
