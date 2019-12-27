@@ -1,6 +1,6 @@
 = Exploring Itsu Allergens with Neo4j
 
-The code in this repository goes with the <insert link> blog post 
+The code in this repository goes with the https://markhneedham.com/blog/2019/12/23/quick-graph-itsu-allergens/ blog post 
 
 
 == Downloading and scraping product data
